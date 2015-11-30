@@ -713,7 +713,6 @@ for (var i = 0; i < 30; i++) {
 		svgLayer.set('layer', this._element);
 		svgLayer.set('class', this._name);
 		this._rootIndex = this.addLayer(svgLayer);
-		svgLayer.render();
 
 		if (options.margin) {
 			svgLayer.set('margin', options.margin || svgLayer.get('margin'));	
@@ -724,7 +723,9 @@ for (var i = 0; i < 30; i++) {
 		if (options.height) {
 			svgLayer.set('height', options.height);
 		}
-		
+
+		svgLayer.render();
+
 		var padding = this._options.padding || 20;
 		
 		/** axis */
@@ -886,15 +887,17 @@ for (var i = 0; i < 30; i++) {
 		fn.apply(configLayer, depLayers);
 	}
 
+	var _plugins = {};
+
 	/**
 	 * Trach plugin
 	 */
-	Trach.prototype.plugin = function (name, factory) {
+	function plugin (name, factory) {
 		if (!factory) {
-			return this._getPlugin(name);
+			return _getPlugin(name);
 		}
 
-		this._addPlugin(name, factory);
+		_addPlugin(name, factory);
 	}
 
 	/**
@@ -902,8 +905,8 @@ for (var i = 0; i < 30; i++) {
 	 * @param {string} name - The Plugin name
 	 * @param {function} factory - The Plugin factory
 	 */
-	Trach.prototype._addPlugin = function (name, factory) {
-		var plugins = this._plugins = this._plugins = {};
+	function _addPlugin (name, factory) {
+		var plugins = _plugins;
 
 		if (name in plugins) {
 			throw new Error("Plugin already added");
@@ -924,23 +927,27 @@ for (var i = 0; i < 30; i++) {
 	/**
 	 * Get a plugin
 	 */
-	Trach.prototype._getPlugin = function (name) {
-		if (!this._plugins || !name || !(name in this._plugins)) {
+	function _getPlugin (name) {
+		if (!name || !(name in _plugins)) {
 			throw new Error("No such plugin: " + name);
 		} 
 
-		return this._plugins[name];
+		return _plugins[name];
 	}
 	
 	// the only api
-	return function (name, data, element, options) {
+	var api = function (name, data, element, options) {
 		var trach = new Trach(name, data, element, options);
 		
 		return trach;
-	}
+	};
+
+	api.plugin = plugin;
+
+	return api;
 }));
 
-var Tooltip = function () {
+(function () {
 	var _id = 0;
 
 	// tooltip for d3
@@ -1046,102 +1053,7 @@ var Tooltip = function () {
 			.html(content);
 	}
 
-	return Tooltip;
-}.call(this);
-
-
-/****** A P P ******/
-
-var __d = (function () {
-	var p = [];
-	for (var i = 0; i < 30; i++) {
-		p.push(Math.floor(Math.random() * 30 + 1));
-	}
-	return p;
-})();
-
-var _data_ = {
-	main: __d
-};
-var ele = document.querySelector('.chart1');
-
-var app = new Trach('myChart', _data_, ele, {
-	grid: true,
-	config: function (trach) {
-		var lineLayer = trach.getLayer('data-line');
-		lineLayer.set('class', 'line line1');
-
-		var tooltip = trach.plugin('tooltip').factory({
-			dir: 'right',
-			taken: document.body
-		});
-
-		trach.config('event-area', ['dot-bars', 'ruler'], function (bar, ruler) {
-			this.set('mouseover', function () {
-				ruler.dnode().classed('hide', false);
-				console.log('hi');
-			});
-			this.set('mouseout', function () {
-				setTimeout(function () {
-					if (bar.get('enterDotbar')) {
-						return;
-					}
-					ruler.dnode().classed('hide', true);
-				}, 0);
-			});
-			this.set('mousemove', function () {
-				var coord = d3.mouse(this);
-				ruler.dnode().attr('transform', 'translate(' + coord[0] + ',' + '0)');
-			});
-		});
-
-		trach.config('dot-bars', ['ruler', 'clippath', 'dots'], function (ruler, clippath, dots) {
-			var self = this;
-			var root = self.root().dnode();
-
-			this.set('mouseover', function () {
-				self.set('enterDotbar', true);
-				if (ruler.dnode().classed('hide')) {
-					ruler.dnode().classed('hide', false);
-				}
-
-				var dnode = d3.select(this);
-				var id = +(dnode.attr('data-id'));
-
-				var dot = root.select('.' + dots.get('dot-class') + '-' + id)
-					.classed('hover', true);
-
-				var rect = d3.select('#' + clippath.id())
-					.select('rect').node().getBoundingClientRect();
-
-				tooltip.show().position({
-					left: +(dot.attr('cx')) + rect.left,
-					top: +(dot.attr('cy')) + rect.top
-				}).text((dot.data())[0]);
-			});
-
-			this.set('mousemove', function () {
-				var coord = d3.mouse(this);
-				ruler.dnode().attr('transform', 'translate(' + coord[0] + ',' + '0)');
-			});
-
-			this.set('mouseout', function () {
-				self.set('enterDotbar', false);
-				ruler.dnode().classed('hide', true);
-				var dnode = d3.select(this);
-				var id = +(dnode.attr('data-id'));
-
-				root.select('.' + dots.get('class') + '-' + id)
-					.classed('hover', false);
-
-				tooltip.hide();
-			});
-		});
-	}
-});
-
-app.plugin('tooltip', function (args) {
-	return new Tooltip(args);
-});
-
-app.render();
+	Trach.plugin('tooltip', function (args) {
+		return new Tooltip(args);
+	});
+}.call(this));
