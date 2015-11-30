@@ -1,0 +1,113 @@
+
+.grid line {
+	stroke: #f7f7f7;
+}
+.grid path {
+	stroke-width: 0;
+}
+
+.axis path {
+	fill: none;
+	stroke: #bbb;
+	shape-rendering: crispEdges;
+}
+
+.y.axis path {
+	stroke: none;
+}
+
+.x.axis path {
+	stroke: #787E85;
+	stroke-width: 2;
+}
+
+.axis text {
+	font-size: 11px;
+	color: #ABB4C3;
+}
+
+.y.axis text {
+	font-size: 14px;
+	color: #4B525C;
+}
+
+.grid .em {
+	stroke: #DBDCDE;
+}
+
+.line {
+	stroke-width: 2;
+}
+
+.line1 {
+	stroke: #2CD6B1;
+}
+
+.dots .dot {
+	stroke-width: 2;
+	fill: #FFFFFF;
+	stroke: #2CD6B1;
+	transition: fill .3s ease;
+	/*display: none;*/
+}
+
+
+/** ruler */
+.ruler {
+	stroke-width: 2;
+	stroke: #787E85;
+	transition: opacity .3s ease;
+	opacity: .2;
+}
+
+.ruler.hide {
+	opacity: 0;
+}
+
+.eventarea {
+	cursor: default;
+}
+
+.hover.hover {
+	fill: #D5F7EF;
+}
+
+.tooltip-for-d3 {
+	position: absolute;
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 15px;
+	text-align: center;
+	transition: opacity 0.4s ease, visibility .4s ease;
+	z-index: 999;
+}
+
+.tooltip-for-d3--content {
+	word-break: keep-all;
+	white-space: nowrap;
+	position: relative;
+	text-align: left;
+	left: 0;
+	transition: all .5s ease;
+	background: #424242;
+	color: #fff;
+	padding: 8px 10px;
+	border-radius: 4px;
+	display: inline-block;
+}
+
+.tooltip-for-d3--content:before {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 0;
+	margin-left: -7px;
+	margin-top: -7px;
+	border-top: 7px solid transparent;
+	border-bottom: 7px solid transparent;
+	border-right: 7px solid #424242;
+}
+
+.invisible {
+	visibility: hidden;
+}
