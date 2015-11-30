@@ -61,9 +61,12 @@ var config = function (trach) {
 			var rect = d3.select('#' + clippath.id())
 				.select('rect').node().getBoundingClientRect();
 
+			var x = (window.pageXOffset !== undefined) ? window.pageXOffset : (document.documentElement || document.body.parentNode || document.body).scrollLeft;
+			var y = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+
 			tooltip.show().position({
-				left: +(dot.attr('cx')) + rect.left,
-				top: +(dot.attr('cy')) + rect.top
+				left: +(dot.attr('cx')) + rect.left + x,
+				top: +(dot.attr('cy')) + rect.top + y
 			}).text((dot.data())[0]);
 		});
 
@@ -78,7 +81,7 @@ var config = function (trach) {
 			var dnode = d3.select(this);
 			var id = +(dnode.attr('data-id'));
 
-			root.select('.' + dots.get('class') + '-' + id)
+			root.select('.' + dots.get('dot-class') + '-' + id)
 				.classed('hover', false);
 
 			tooltip.hide();
@@ -93,6 +96,420 @@ var app = new Trach('myChart', _data_, ele, {
 app.render();
 
 var app2 = new Trach('myChart2', _data_, document.querySelector('.chart2'), {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
+	grid: true,
+	config: config
+});
+app2.render();
+
+var app2 = new Trach('myChart2', _data_, null, {
 	grid: true,
 	config: config
 });
