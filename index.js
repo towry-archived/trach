@@ -740,7 +740,7 @@ for (var i = 0; i < 30; i++) {
 		
 		var yAxisLayer = new AxisLayer('y', this);
 		yAxisLayer.set('scale', this.yscale());
-		yAxisLayer.set('domain', d3.extent(this.data(), this._options.x_accessor));
+		yAxisLayer.set('domain', d3.extent(this.data(), this._options.y_accessor));
 		yAxisLayer.set('range', [svgLayer.height() - padding, padding]);
 		yAxisLayer.set('class', 'y axis');
 		yAxisLayer.set('orient', 'left');
