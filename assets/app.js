@@ -4,8 +4,8 @@
 
 var __d = (function () {
 	var p = [];
-	for (var i = 0; i < 30; i++) {
-		p.push(Math.floor(Math.random() * 30 + 1));
+	for (var i = 0; i < 80; i++) {
+		p.push(Math.floor(Math.random() * 100 + 1));
 	}
 	return p;
 })();

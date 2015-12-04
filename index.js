@@ -5,16 +5,6 @@
  * Released under MIT License http://towry.me/license/mit/LICENSE.txt
  */
 
-/* global Trach */
-/* global d3, __DATA__ */
-
-var datac = [];
-
-for (var i = 0; i < 30; i++) {
-	datac.push(Math.floor(Math.random() * 1000 + 1));
-}
-
-// refactory
 (function (factory) {
 	if (typeof module !== 'undefined' && module.exports) {
 		module.exports = factory();
@@ -36,17 +26,17 @@ for (var i = 0; i < 30; i++) {
 		height: 400
 	};
 	
-	var layers = [
-		'axis',
-		'grid',
-		'clip',
-		'ruler',
-		'datapath',
+	// var layers = [
+	// 	'axis',
+	// 	'grid',
+	// 	'clip',
+	// 	'ruler',
+	// 	'datapath',
 		
-		'dots',
-		'eventarea',
-		'dotbars'
-	];
+	// 	'dots',
+	// 	'eventarea',
+	// 	'dotbars'
+	// ];
 	
 	/* ========== F U N C T I O N =========== */
 	
@@ -150,8 +140,14 @@ for (var i = 0; i < 30; i++) {
 
 		function createLayer (name, defs) {
 
-			function SubLayer (master) {
-				Layer.call(this, name, master);
+			function SubLayer () {
+				var args = Array.prototype.slice.call(arguments);
+				if (!args.length) {
+					throw new TypeError("Missing controller for this layer");
+				}
+
+				args.unshift(name);
+				Layer.apply(this, args);
 			}
 			inherit(SubLayer, Layer);
 
@@ -174,329 +170,298 @@ for (var i = 0; i < 30; i++) {
 	}.call(this));
 	
 	/* =========== C L A S S ============== */
-	
-	function SvgLayer (master) {
-		Layer.call(this, "svg", master);
-	}
-	inherit(SvgLayer, Layer);
-	
-	SvgLayer.prototype.init = function () {
-		this.set('width', 960);
-		this.set('height', 500);
-		this.set('margin', {
-			top: 20,
-			right: 20,
-			bottom: 20,
-			left: 40
-		});
-		this.set('svg', null);
-		this.set('class', '');
-	}
-	
-	SvgLayer.prototype.width = function () {
-		var margin = this.get('margin');
-		return this.get('width') - margin.left - margin.right;
-	}
-	
-	SvgLayer.prototype.height = function () {
-		var margin = this.get('margin');
-		return this.get('height') - margin.top - margin.bottom;
-	}
-	
-	SvgLayer.prototype.render = function () {
-		var ele = this.get('layer');
-		if (!ele) {
-			ele = this.set('layer', document.body, true);
-		}
-		var margin = this.get('margin');
-		
-		var svg = d3.select(ele).append('svg')
-			.attr('class', this.get('class'))
-			.attr('width', this.get('width'))
-			.attr('height', this.get('height'))
-		.append('g')
-			.attr('transform', translate(margin.left, margin.top));
+
+	var SvgLayer = createLayer('svg', {
+		init: function () {
+			this.set('width', 960);
+			this.set('height', 500);
+			this.set('margin', {
+				top: 20,
+				right: 20,
+				bottom: 20,
+				left: 40
+			});
+			this.set('svg', null);
+			this.set('class', '');
+		},
+		width: function () {
+			var margin = this.get('margin');
+			return this.get('width') - margin.left - margin.right;
+		},
+		height: function () {
+			var margin = this.get('margin');
+			return this.get('height') - margin.top - margin.bottom;
+		},
+		render: function () {
+			var ele = this.get('layer');
+			if (!ele) {
+				ele = this.set('layer', document.body, true);
+			}
+			var margin = this.get('margin');
 			
-		this.set('dnode', svg);
-	}
-	
-	
-	/* =========== C L A S S ============== */
-	
-	function AxisLayer (type, master) {
-		this._type = type;
-		Layer.call(this, "axis", master);
-	}
-	inherit(AxisLayer, Layer);
-	
-	AxisLayer.prototype.init = function () {
-		this.set('scale', d3.scale.linear());
-		this.set('scaleType', 'linear');
-		this.set('domain', null);
-		this.set('range', null);
-		this.set('orient', 'bottom');
-		this.set('layer', null);
-		this.set('format', null);
-		
-		this._axis = d3.svg.axis();
-	}
-	
-	AxisLayer.prototype.render = function () {
-		var layer = this.root();
-		
-		if (!layer) {
-			throw new Error("The parent layer is not set");
+			var svg = d3.select(ele).append('svg')
+				.attr('class', this.get('class'))
+				.attr('width', this.get('width'))
+				.attr('height', this.get('height'))
+			.append('g')
+				.attr('transform', translate(margin.left, margin.top));
+				
+			this.set('dnode', svg);
 		}
-		
-		var scale = this.get('scale')
-			.range(this.get('range'))
-			.domain(this.get('domain'));
-		
-		var axis = this._axis;
-		axis.scale(scale).orient(this.get('orient'));
-		
-		if (this.get('format')) {
-			axis.tickFormat(this.get('format'));
+	});
+	
+	var AxisLayer = createLayer('axis', {
+		init: function () {
+			this.set('scale', d3.scale.linear());
+			this.set('scaleType', 'linear');
+			this.set('domain', null);
+			this.set('range', null);
+			this.set('orient', 'bottom');
+			this.set('layer', null);
+			this.set('format', null);
+			
+			this._axis = d3.svg.axis();
+			this._type = null;
+		},
+		setType: function (type) {
+			this._type = type;
+		},
+		render: function () {
+			var layer = this.root();
+			
+			if (!layer) {
+				throw new Error("The parent layer is not set");
+			}
+			
+			var scale = this.get('scale')
+				.range(this.get('range'))
+				.domain(this.get('domain'));
+			
+			var axis = this._axis;
+			axis.scale(scale).orient(this.get('orient'));
+			
+			if (this.get('format')) {
+				axis.tickFormat(this.get('format'));
+			}
+			
+			var transform = this._type === 'x' ?
+				translate(0, layer.height()) : null;
+			
+			var svg = layer.dnode();
+			var dnode = svg.append('g')
+				.attr('class', this.get('class') || 'x axis');
+			if (transform) {
+				dnode.attr('transform', transform);
+			}
+			
+			dnode.call(axis);
+			this._axis = axis;
+		},
+		getAxis: function () {
+			return this._axis;
 		}
-		
-		var transform = this._type === 'x' ?
-			translate(0, layer.height()) : null;
-		
-		var svg = layer.dnode();
-		var dnode = svg.append('g')
-			.attr('class', this.get('class') || 'x axis');
-		if (transform) {
-			dnode.attr('transform', transform);
+	});
+
+	
+	var GridLayer = createLayer('grid', {
+		init: function () {
+			this.set('class', this._type + ' grid');
+			this.set('style', null);
+			this.set('axis', null);
+			this.set('format', null);
+
+			this._type = null;
+		},
+		setType: function (type) {
+			this._type = type;
+		},
+		render: function () {
+			var layer = this.root();
+			
+			if (!layer) {
+				throw new Error("The parent layer is not set");
+			}
+			
+			var svg = layer.dnode();
+			var transform;
+			if (this._type === 'x') {
+				transform = translate(0, layer.height());
+			}
+			var dnode = svg.append('g')
+				.attr('class', this.get('class'))
+			this.set('dnode', dnode);
+			
+			if (transform) {
+				dnode.attr('transform', transform);
+			}
+			
+			// if (this.get('style') && Object.prototype.toString.call(this.get('style')) === '[object Object]') {
+			// 	dnode.style(this.get('style'));
+			// }
+			dnode.style('stroke-dasharray', ('3, 3'));
+			
+			var axis = this.get('axis');
+			if (this._type === 'x') {
+				axis.tickSize(-(layer.height()), 0, 0).tickFormat('');
+			} else {
+				axis.tickSize(-(layer.width()), 0, 0).tickFormat('');
+			}
+			
+			dnode.call(axis);
+			
+			if (this.get('format')) {
+				svg.selectAll('.grid .tick')
+					.filter(function (d) {
+						return this.get('format')(d) !== '';
+					}.bind(this))
+					.select('line')
+					.classed('em', true);
+			}
 		}
-		
-		dnode.call(axis);
-		this._axis = axis;
-	}
-	
-	AxisLayer.prototype.getAxis = function () {
-		return this._axis;
-	}
-	
-	/* =========== C L A S S ============== */
-	
-	function GridLayer (type, master) {
-		this._type = type;	
-		Layer.call(this, 'grid', master);		
-	}
-	inherit(GridLayer, Layer);
-	
-	GridLayer.prototype.init = function () {
-		this.set('class', this._type + ' grid');
-		this.set('style', null);
-		this.set('axis', null);
-		this.set('format', null);
-	}
-	
-	GridLayer.prototype.render = function () {
-		var layer = this.root();
-		
-		if (!layer) {
-			throw new Error("The parent layer is not set");
+	});
+
+
+	var ClipPathLayer = createLayer('clippath', {
+		init: function () {
+			this.set('id', 1);
+			this.set('layer', null);
+		},
+
+		id: function () {
+			return 'clippath' + this.get('id');
+		},
+
+		url: function () {
+			return 'url(#' + this.id() + ')';
+		},
+
+		render: function () {
+			var layer = this.root();
+			
+			if (!layer) {
+				throw new Error("The parent layer is not set");
+			}
+			
+			var svg = layer.dnode();
+			var dnode = svg.append('clipPath')
+				.attr('id', this.id())
+			.append('rect')
+			.attr('width', layer.width())
+			.attr('height', layer.height());
+			
+			this.set('dnode', dnode);
 		}
-		
-		var svg = layer.dnode();
-		var transform;
-		if (this._type === 'x') {
-			transform = translate(0, layer.height());
+	});
+	
+	var RulerLayer = createLayer('ruler', {
+		init: function () {
+			this.set('class', 'x ruler hide');
+			this.set('y1', 0);
+			this.set('y2', 0);
+			this.set('style', null);
+			this.set('clippath', null);
+			this.set('layer', null);
+		},
+		render: function () {
+			var layer = this.root();
+
+			var clippathLayer = this.getLayer('clippath');
+
+			var svg = layer.dnode();
+			var dnode = svg.append('line')
+				.attr('class', 'x ruler hide')
+				.attr('y1', this.get('y1') || layer.height())
+				.attr('y2', this.get('y2'))
+				.style('stroke-width', 4)
+				.attr('clip-path', clippathLayer.url());
+			
+			this.set('dnode', dnode);
 		}
-		var dnode = svg.append('g')
-			.attr('class', this.get('class'))
-		this.set('dnode', dnode);
-		
-		if (transform) {
-			dnode.attr('transform', transform);
+	});
+
+	var DotsLayer = createLayer('dots', {
+		init: function () {
+			this.set('class', 'dots');
+			this.set('dot-class', 'dot');
+			this.set('radius', 6);
+			this.set('data', null);
+		},
+		render: function () {
+			var svg = this.root().dnode();
+			var clipPath = this.getLayer('clippath');
+
+			var xscale = this._master.xscale();
+			var yscale = this._master.yscale();
+			var y_accessor = this._master.y_accessor();
+
+			var data = this.get('data') ||
+				this._master.data();
+
+			// if no data, do not draw the dots
+			if (!data) {
+				return;
+			}
+
+			var self = this;
+			var dnode = svg.append('g')
+				.datum(data)
+				.attr('class', this.get('class'))
+				.attr('clip-path', clipPath.url());
+
+			dnode.selectAll(className(this.get('dot-class')))
+				.data(data)
+			.enter().append('circle')
+				.attr('class', function (d, i) {
+					return self.get('dot-class') + ' ' + self.get('dot-class') + '-' + i;
+				})
+				.attr('r', this.get('radius'))
+				.attr('cx', function (d, i) {
+					return xscale(i);
+				})
+				.attr('cy', function (d) {
+					return yscale(y_accessor(d));
+				});
+
+			this.set('dnode', dnode);
 		}
-		
-		// if (this.get('style') && Object.prototype.toString.call(this.get('style')) === '[object Object]') {
-		// 	dnode.style(this.get('style'));
-		// }
-		dnode.style('stroke-dasharray', ('3, 3'));
-		
-		var axis = this.get('axis');
-		if (this._type === 'x') {
-			axis.tickSize(-(layer.height()), 0, 0).tickFormat('');
-		} else {
-			axis.tickSize(-(layer.width()), 0, 0).tickFormat('');
+	});
+
+	var DataLineLayer = createLayer('data-line', {
+		init: function () {
+			this.set('class', 'line');
+			this.set('fill', 'none');
+			this.set('data', null);
+			this.set('interpolate', 'linear');
+		},
+		render: function () {
+			var svg = this.root().dnode();
+
+			var xscale = this._master.xscale();
+			var yscale = this._master.yscale();
+			var y_accessor = this._master.y_accessor();
+
+			var clipPath = this.getLayer('clippath');
+
+			var line = d3.svg.line()
+				.interpolate(this.get('interpolate'))
+				.x(function (d, i) {
+					return xscale(i);
+				})
+				.y(function (d) {
+					return yscale(y_accessor(d));
+				});
+
+			var dnode = svg.append('path')
+				.datum(this.get('data') || this._master.data())
+				.attr('class', this.get('class'))
+				.attr('clip-path', clipPath.url())
+				.attr('fill', this.get('fill'))
+				.attr('d', line);
+
+			this.set('dnode', dnode);
+			this.set('line', line);
 		}
-		
-		dnode.call(axis);
-		
-		if (this.get('format')) {
-			svg.selectAll('.grid .tick')
-				.filter(function (d) {
-					return this.get('format')(d) !== '';
-				}.bind(this))
-				.select('line')
-				.classed('em', true);
-		}
-	}
-	
-	/* =========== C L A S S ============== */
-	
-	function ClipPathLayer (master) {
-		Layer.call(this, 'clippath', master);
-	}
-	inherit(ClipPathLayer, Layer);
-	
-	ClipPathLayer.prototype.init = function () {
-		this.set('id', 1);
-		this.set('layer', null);
-	}
-
-	ClipPathLayer.prototype.id = function () {
-		return 'clippath' + this.get('id');
-	}
-
-	ClipPathLayer.prototype.url = function () {
-		return 'url(#' + this.id() + ')';
-	}
-	
-	ClipPathLayer.prototype.render = function () {
-		var layer = this.root();
-		
-		if (!layer) {
-			throw new Error("The parent layer is not set");
-		}
-		
-		var svg = layer.dnode();
-		var dnode = svg.append('clipPath')
-			.attr('id', this.id())
-		.append('rect')
-		.attr('width', layer.width())
-		.attr('height', layer.height());
-		
-		this.set('dnode', dnode);
-	}
-	
-	/* =========== C L A S S ============== */
-	
-	function RulerLayer (master) {
-		Layer.call(this, 'ruler', master);
-	}
-	inherit(RulerLayer, Layer);
-	
-	RulerLayer.prototype.init = function () {
-		this.set('class', 'x ruler hide');
-		this.set('y1', 0);
-		this.set('y2', 0);
-		this.set('style', null);
-		this.set('clippath', null);
-		this.set('layer', null);
-	}
-	
-	RulerLayer.prototype.render = function () {
-		var layer = this.root();
-
-		var clippathLayer = this.getLayer('clippath');
-
-		var svg = layer.dnode();
-		var dnode = svg.append('line')
-			.attr('class', 'x ruler hide')
-			.attr('y1', this.get('y1') || layer.height())
-			.attr('y2', this.get('y2'))
-			.style('stroke-width', 4)
-			.attr('clip-path', clippathLayer.url());
-		
-		this.set('dnode', dnode);
-	}
-
-	// the data
-	function DotsLayer (master) {
-		Layer.call(this, 'dots', master);
-	}
-	inherit(DotsLayer, Layer);
-
-	DotsLayer.prototype.init = function () {
-		this.set('class', 'dots');
-		this.set('dot-class', 'dot');
-		this.set('radius', 6);
-		this.set('data', null);
-	}
-
-	DotsLayer.prototype.render = function () {
-		var svg = this.root().dnode();
-		var clipPath = this.getLayer('clippath');
-
-		var xscale = this._master.xscale();
-		var yscale = this._master.yscale();
-		var y_accessor = this._master.y_accessor();
-
-		var data = this.get('data') ||
-			this._master.data();
-
-		// if no data, do not draw the dots
-		if (!data) {
-			return;
-		}
-
-		var self = this;
-		var dnode = svg.append('g')
-			.datum(data)
-			.attr('class', this.get('class'))
-			.attr('clip-path', clipPath.url());
-
-		dnode.selectAll(className(this.get('dot-class')))
-			.data(data)
-		.enter().append('circle')
-			.attr('class', function (d, i) {
-				return self.get('dot-class') + ' ' + self.get('dot-class') + '-' + i;
-			})
-			.attr('r', this.get('radius'))
-			.attr('cx', function (d, i) {
-				return xscale(i);
-			})
-			.attr('cy', function (d) {
-				return yscale(y_accessor(d));
-			});
-
-		this.set('dnode', dnode);
-	}
-
-	function DataLineLayer (master) {
-		Layer.call(this, 'data-line', master);
-	}
-	inherit(DataLineLayer, Layer);
-
-	DataLineLayer.prototype.init = function () {
-		this.set('class', 'line');
-		this.set('fill', 'none');
-		this.set('data', null);
-		this.set('interpolate', 'linear');
-	}
-
-	DataLineLayer.prototype.render = function () {
-		var svg = this.root().dnode();
-
-		var xscale = this._master.xscale();
-		var yscale = this._master.yscale();
-		var y_accessor = this._master.y_accessor();
-
-		var clipPath = this.getLayer('clippath');
-
-		var line = d3.svg.line()
-			.interpolate(this.get('interpolate'))
-			.x(function (d, i) {
-				return xscale(i);
-			})
-			.y(function (d) {
-				return yscale(y_accessor(d));
-			});
-
-		var dnode = svg.append('path')
-			.datum(this.get('data') || this._master.data())
-			.attr('class', this.get('class'))
-			.attr('clip-path', clipPath.url())
-			.attr('fill', this.get('fill'))
-			.attr('d', line);
-
-		this.set('dnode', dnode);
-		this.set('line', line);
-	}
+	});
 
 
 	var EventAreaLayer = createLayer('event-area', {
@@ -729,7 +694,8 @@ for (var i = 0; i < 30; i++) {
 		var padding = this._options.padding || 20;
 		
 		/** axis */
-		var xAxisLayer = new AxisLayer('x', this);
+		var xAxisLayer = new AxisLayer(this);
+		xAxisLayer.setType('x');
 		xAxisLayer.set('scale', this.xscale());
 		xAxisLayer.set('domain', d3.extent(this.data(), this._options.x_accessor));
 		xAxisLayer.set('range', [padding, svgLayer.width() - padding]);
@@ -738,7 +704,8 @@ for (var i = 0; i < 30; i++) {
 		}
 		this.addLayer(xAxisLayer);
 		
-		var yAxisLayer = new AxisLayer('y', this);
+		var yAxisLayer = new AxisLayer(this);
+		yAxisLayer.setType('y');
 		yAxisLayer.set('scale', this.yscale());
 		yAxisLayer.set('domain', d3.extent(this.data(), this._options.y_accessor));
 		yAxisLayer.set('range', [svgLayer.height() - padding, padding]);
@@ -752,14 +719,16 @@ for (var i = 0; i < 30; i++) {
 		/** grid */
 		var xGrid, yGrid;
 		if (options.grid) {
-			xGrid = new GridLayer('x', this);
+			xGrid = new GridLayer(this);
+			xGrid.setType('x');
 			xGrid.set('axis', xAxisLayer.getAxis());
 			if (options.x_format) {
 				xGrid.set('format', options.x_format);
 			}
 			this.addLayer(xGrid);
 
-			yGrid = new GridLayer('y', this);
+			yGrid = new GridLayer(this);
+			yGrid.setType('y');
 			yGrid.set('axis', yAxisLayer.getAxis());
 			if (options.y_format) {
 				yGrid.set('format', options.y_format);
