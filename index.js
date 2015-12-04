@@ -812,6 +812,19 @@
 		return this._data.main;
 	}
 
+	Trach.prototype.setData = function (data) {
+		this._data.main = data;
+	}
+
+	Trach.prototype.redraw = function () {
+		var root = this.getLayer('svg');
+		if (root && root.dnode()) {
+			root.dnode().remove();
+		}
+		this._layers = [];
+		this.render();
+	}
+
 	Trach.prototype.x_accessor = function () {
 		return this._options.x_accessor;
 	}
