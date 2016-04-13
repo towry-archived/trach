@@ -1,8 +1,8 @@
 /*! 
  * A simple d3 based chart library.
  * 
- * Copyright 2015, Towry Wang
- * Released under MIT License http://towry.me/license/mit/LICENSE.txt
+ * Copyright 2015 - 2016, Towry Wang
+ * MIT Licensed https://github.com/towry/LICENSE/wiki/MIT-License
  */
 
 (function (factory) {
@@ -1035,7 +1035,7 @@
 			.html(content);
 	}
 
-	Trach.plugin('tooltip', function (args) {
-		return new Tooltip(args);
-	});
+	// Trach.plugin('tooltip', function (args) {
+	// 	return new Tooltip(args);
+	// });
 }.call(this));
