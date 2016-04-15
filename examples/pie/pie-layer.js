@@ -1,5 +1,6 @@
 
 var createLayer = require('../../src').createLayer;
+var translate = require('../../src/').utils.translate;
 
 module.exports = createLayer('pieLayer', {
 
@@ -28,7 +29,25 @@ module.exports = createLayer('pieLayer', {
 	},
 
 	update: function () {
-		console.debug('yeah, I am called');
+		console.debug('update the chart');
+		var data = this.context().data;
+		var g = this.context().selection
+			.selectAll('.arc')
+			.data(this._pie(data))
+		.enter().append('g')
+			.attr('class', 'arc');
+
+		g.append('path')
+			.attr('d', this._arc)
+			.style('fill', function (d) {
+				return this._color(d.data.age);
+			});
+
+		g.append('text')
+			.attr('transform', function (d) {
+				return translate(this._labelArc.centroid(d));
+			})
+
 	},
 
 	render: function () {

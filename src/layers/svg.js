@@ -5,11 +5,11 @@ var translate = require('../utils').translate;
 module.exports = createLayer('svg', {
 
 	init: function () {
-	
+
 	},
 
 	update: function () {
-		var selection = this.get('selection');
+		var selection = this.get('target');
 		var group = selection.selectAll('.arc')
 			.data(this.get('pie')(data))
 		.enter().append('g')
@@ -39,6 +39,8 @@ module.exports = createLayer('svg', {
 			.attr('height', this.get('height', 400))
 		.append('g')
 			.attr('transform', translate(20, 20));
+
+		return svg;
 	}
 
 })

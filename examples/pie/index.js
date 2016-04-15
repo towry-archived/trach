@@ -11,7 +11,8 @@ module.exports = function(options) {
 	svgLayer.append(pieLayer);
 	svgLayer.set('width', 680);
 	svgLayer.set('height', 390);
-	svgLayer.set('selection', document.body);
+	svgLayer.set('target', document.body);
+	svgLayer.set('data', data);
 
 	svgLayer.render();
 	pieLayer.render();

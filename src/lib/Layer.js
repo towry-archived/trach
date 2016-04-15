@@ -112,6 +112,10 @@ function createChainedMethodForRender(method) {
 		if (this.context().data) {
 			this.update();
 		}
+		// the value is the return of render.
+		if (value) {
+			this.set('selection', value);
+		}
 		return value;
 	}
 }
@@ -123,7 +127,6 @@ function createChainedMethodForRender(method) {
 function createChainedMethodForContext(method) {
 	return function () {
 		var owner = getOwner(this);
-		console.log(owner);
 		if (!owner) {
 			throw new Error("The layer doesn't have a owner.");
 		}
@@ -159,6 +162,7 @@ function evaluateContext(owner, keys) {
 
 	// inject optional.
 	evaluated['data'] = owner.get('data');
+	evaluated['selection'] = owner.get('selection');
 	
 	return evaluated;
 }
