@@ -26,15 +26,20 @@ function Layer (name) {
 inherit(Layer, Pin);
 
 Layer.prototype.render = function () {
-	throw new Error("Not implemented");
+	return null;
+}
+
+Layer.prototype.update = function () {
 }
 
 Layer.prototype.init = function () {
-	throw new Error("Missing method init");
 }
 
 Layer.prototype.children = function () {
 	return this._childs;
+}
+
+Layer.prototype.contextReceiveChange = function (/** ctx */) {
 }
 
 Layer.prototype.append = function (layer) {
@@ -71,9 +76,9 @@ Layer.prototype.context = function () {
 function createLayer(name, defs) {
 	var nextConstruct = function () {
 		var args = Array.prototype.slice.call(arguments);
-		if (!args.length) {
-			throw new TypeError("Missing something.");
-		}
+		// if (!args.length) {
+		// 	throw new TypeError("Missing something in layer: " + name);
+		// }
 
 		args.unshift(name);
 		Layer.apply(this, args);
@@ -90,14 +95,13 @@ function createLayer(name, defs) {
 		if (hasOwn.call(defs, m)) {
 			if (m === 'context') {
 				prop[m] = createChainedMethodForContext(defs[m]);
-			} else if (m === 'render') {
-				prop[m] = createChainedMethodForRender(defs[m]);
 			} else {
 				prop[m] = defs[m];
 			}
 		}
 	}
 
+	prop.render = createChainedMethodForRender(defs.render || prop.render);
 	return nextConstruct;
 }
 
@@ -106,18 +110,35 @@ function createLayer(name, defs) {
  */
 function createChainedMethodForRender(method) {
 	return function () {
+
 		this.init();
+
 		var value = method.call(this);
 		// call update after render if there is a data
 		if (this.context().data) {
 			this.update();
 		}
+
 		// the value is the return of render.
 		if (value) {
 			this.set('selection', value);
+		} else if (value !== null) {
+			throw new Error("[" + this.name + "] render method must return a d3 node or null value.");
 		}
+
+		renderLayerChildren(this);
 		return value;
 	}
+}
+
+/**
+ * Render the childs of the layer.
+ */
+function renderLayerChildren(layer) {
+	var childs = layer._childs;
+	childs.forEach(function (child) {
+		child.render();
+	});
 }
 
 /**
@@ -125,6 +146,9 @@ function createChainedMethodForRender(method) {
  * to get a context.
  */
 function createChainedMethodForContext(method) {
+	/**
+	 * TODO: add cache, add context change notify.
+	 */
 	return function () {
 		var owner = getOwner(this);
 		if (!owner) {
@@ -138,7 +162,10 @@ function createChainedMethodForContext(method) {
 
 		attachContextPolicyToOwner(owner, contextPolicy);
 
-		return evaluateContext(owner, Object.keys(contextPolicy));
+		var evaluated = evaluateContext(owner, Object.keys(contextPolicy));
+		// call the receive change handler
+		this.contextReceiveChange(evaluated);
+		return evaluated;
 	}
 }
 
@@ -177,7 +204,7 @@ function throwIfAgainstPolicy(owner, key) {
 		policy = [policy];
 	}
 
-	throw new Error("policy error: layer requires following pins: " + policy.join(';'));
+	console.error("policy error: [" + owner.name + "] must provide following pins: " + policy.join(';'));
 }
 
 /**

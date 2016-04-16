@@ -5,42 +5,45 @@ var translate = require('../utils').translate;
 module.exports = createLayer('svg', {
 
 	init: function () {
-
+		var context = this.context();
+		var margin = this.get('margin');
 	},
 
-	update: function () {
-		var selection = this.get('target');
-		var group = selection.selectAll('.arc')
-			.data(this.get('pie')(data))
-		.enter().append('g')
-			.attr('class', 'arc');
+	context: function () {
+		/**
+		 * Like react's propTypes?
+		 */
+		return {
+			width: 'the svg width',
+			height: 'the svg height',
+			target: 'the svg container',
+			margin: 'the svg margins'
+		}
+	},
 
-		group.append('path')
-			.attr('d', arc)
-			.style('fill', function (d) {
-				return color(d.age); // todo
-			});
-
-		group.append('text')
-			.attr('transform', function (d) {return translate(0, 0)}) // todo
-			.attr('dy', '.35em')
-			.text(function (d) { return d.data }) // todo 
+	contextReceiveChange: function (ctx) {
+		this.set('svg_width', ctx.width);
+		this.set('svg_height', ctx.height);
+		this.set('width', ctx.width - ctx.margin.left - ctx.margin.right);
+		this.set('height', ctx.height - ctx.margin.top - ctx.margin.bottom);
+		this.set('data', ctx.data);
+		this.set('margin', ctx.margin);
 	},
 
 	render: function () {
-		var selection = this.get('selection');
+		var selection = this.context().target;
 		if (!selection) {
-			selection = this.set('selection', document.body, true);
+			return;
 		}
+		var margin = this.get('margin');
 
 		var svg = d3.select(selection).append('svg')
 			.attr('class', this.get('class', 'svg'))
-			.attr('width', this.get('width', 800))
-			.attr('height', this.get('height', 400))
+			.attr('width', this.get('svg_width'))
+			.attr('height', this.get('svg_height'))
 		.append('g')
-			.attr('transform', translate(20, 20));
+			.attr('transform', translate(margin.left, margin.top));
 
 		return svg;
 	}
-
 })

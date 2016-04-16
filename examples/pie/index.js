@@ -1,20 +1,40 @@
 
-var Trach = require('../../src');
+// stylesheets
+require('./pie.css');
+
+// javascripts
+var createLayer = require('../../src').createLayer;
 var SvgLayer = require('../../src/layers/svg');
 var PieLayer = require('./pie-layer');
 var data = require('./data');
 
-module.exports = function(options) {
-	var svgLayer = new SvgLayer({});
-	var pieLayer = new PieLayer({});
 
-	svgLayer.append(pieLayer);
-	svgLayer.set('width', 680);
-	svgLayer.set('height', 390);
-	svgLayer.set('target', document.body);
-	svgLayer.set('data', data);
+var PieChart = createLayer('PieChart', {
 
-	svgLayer.render();
-	pieLayer.render();
-	window.svgLayer = svgLayer;
-}
+	init: function () {
+		this._initLayers();
+	},
+
+	config: function (options) {
+		this.set('width', options.width);
+		this.set('height', options.height);
+		this.set('target', options.target);
+		this.set('data', data);
+		this.set('margin', options.margin || {
+			top: options.height / 2,
+			left: options.width / 2,
+			bottom: 20,
+			right: 20
+		})
+	},
+
+	_initLayers: function () {
+		var svgLayer = new SvgLayer();
+		var pieLayer = new PieLayer();
+		svgLayer.append(pieLayer);
+
+		this.append(svgLayer); 
+	}
+});
+
+module.exports = PieChart;
